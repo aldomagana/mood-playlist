@@ -1,0 +1,87 @@
+[dotenv@17.2.3] injecting env (5) from .env -- tip: 📡 add observability to secrets: https://dotenvx.com/ops
+Server running on port 5001
+Generate route hit. Body: {
+  mood: 'party',
+  access_token: 'BQCvJVv0WMpOLgwdRtJUmbZO_wzkHCJKT6MjWgWj29iMKW0zvSPeXA1swglXC_ZEX3GlJ4BfeZK2LnHysplZdnkFGaGDLzerpEOaiyDbyYgPcc1qWxc2YJm-ccbuPyLJezcBgkQqt_7s1PaztULV-QXssIQjNKqIQMnTgRdJAC9rubDXRGMaxftHw3iG6-H2ri5fSS5-BeDushMY5gTfegrYAoJnlszRo1UAhDfP9fN1nIZzxHkgQ0Dw5chprWD2e86pW0PYm7neu2Ojx7KEb4FgoT6O3fw4-35At400qB9bM52wO18ljZxq2uy6'
+}
+Using access token (masked): BQCvJVv0...jZxq2uy6
+Could not retrieve available genre seeds: Request failed with status code 404
+Using seed genre: dance
+Could not fetch top artists for seed_artists: { error: { status: 403, message: 'Insufficient client scope' } }
+Recommendation params: {
+  limit: 16,
+  market: 'US',
+  seed_genres: 'dance',
+  target_valence: 0.53,
+  target_energy: 0.8,
+  target_tempo: 132
+}
+Attempting recommendations variant 1 {
+  limit: 16,
+  market: 'US',
+  seed_genres: 'dance',
+  target_valence: 0.53,
+  target_energy: 0.8,
+  target_tempo: 132
+}
+Recommendations variant 1 failed: 404
+Client error from recommendations API (4xx) — aborting further recommendation attempts and falling back to search
+All initial recommendation variants failed or returned no tracks; trying tolerant attempts (no market, only genres)...
+Attempting recommendations without market: {
+  limit: 16,
+  seed_genres: 'dance',
+  target_valence: 0.53,
+  target_energy: 0.8,
+  target_tempo: 132
+}
+No-market recommendation attempt failed: 404
+Attempting recommendations with only seed_genres: { limit: 16, seed_genres: 'dance' }
+Only-genres recommendation attempt failed: 404
+All recommendation attempts failed or returned no tracks; falling back to search
+Attempting recommendations stripped of target_* params: { limit: 16, market: 'US', seed_genres: 'dance' }
+Stripped-targets recommendation attempt failed: 404
+Attempting recommendations with small limit: { seed_genres: 'dance', limit: 5 }
+Small-limit recommendation attempt failed: 404
+Generate route hit. Body: {
+  mood: 'party',
+  access_token: 'BQCvJVv0WMpOLgwdRtJUmbZO_wzkHCJKT6MjWgWj29iMKW0zvSPeXA1swglXC_ZEX3GlJ4BfeZK2LnHysplZdnkFGaGDLzerpEOaiyDbyYgPcc1qWxc2YJm-ccbuPyLJezcBgkQqt_7s1PaztULV-QXssIQjNKqIQMnTgRdJAC9rubDXRGMaxftHw3iG6-H2ri5fSS5-BeDushMY5gTfegrYAoJnlszRo1UAhDfP9fN1nIZzxHkgQ0Dw5chprWD2e86pW0PYm7neu2Ojx7KEb4FgoT6O3fw4-35At400qB9bM52wO18ljZxq2uy6'
+}
+Using access token (masked): BQCvJVv0...jZxq2uy6
+Quick repeat detected for 31dsdkro4gfrody52ia4j34r2tf4:party (693ms)
+Could not retrieve available genre seeds: Request failed with status code 404
+Using seed genre: dance
+Recommendation params: {
+  limit: 16,
+  market: 'US',
+  seed_genres: 'dance',
+  target_valence: 0.51,
+  target_energy: 0.89,
+  target_tempo: 72
+}
+Attempting recommendations variant 1 {
+  limit: 16,
+  market: 'US',
+  seed_genres: 'dance',
+  target_valence: 0.51,
+  target_energy: 0.89,
+  target_tempo: 72
+}
+Recommendations variant 1 failed: 404
+Client error from recommendations API (4xx) — aborting further recommendation attempts and falling back to search
+All initial recommendation variants failed or returned no tracks; trying tolerant attempts (no market, only genres)...
+Attempting recommendations without market: {
+  limit: 16,
+  seed_genres: 'dance',
+  target_valence: 0.51,
+  target_energy: 0.89,
+  target_tempo: 72
+}
+No-market recommendation attempt failed: 404
+Attempting recommendations with only seed_genres: { limit: 16, seed_genres: 'dance' }
+Only-genres recommendation attempt failed: 404
+All recommendation attempts failed or returned no tracks; falling back to search
+Attempting recommendations stripped of target_* params: { limit: 16, market: 'US', seed_genres: 'dance' }
+Stripped-targets recommendation attempt failed: 404
+Attempting recommendations with small limit: { seed_genres: 'dance', limit: 5 }
+Small-limit recommendation attempt failed: 404
+Skipping storing recent tracks due to quick repeat

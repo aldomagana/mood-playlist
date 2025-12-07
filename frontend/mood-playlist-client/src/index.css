@@ -1,0 +1,21 @@
+/* Reset some default styles */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: #f5f5f5;
+}
+
+/* Optional: make buttons look nicer globally */
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+/* Optional: center everything by default */
+#root {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
