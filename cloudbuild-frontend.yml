@@ -1,0 +1,26 @@
+steps:
+  # Build the backend Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [
+      'build',
+      '--build-arg', 'VITE_API_URL= https://mood-playlist-backend-780497193982.us-central1.run.app ',
+      '-t', 'gcr.io/$PROJECT_ID/mood-playlist-frontend', './frontend']
+
+  # Push the image to Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/mood-playlist-frontend']
+
+  # Deploy to Cloud Run
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args:
+      [
+        'run', 'deploy', 'mood-playlist-frontend',
+        '--image', 'gcr.io/$PROJECT_ID/mood-playlist-frontend',
+        '--platform', 'managed',
+        '--region', 'us-central1',
+        '--allow-unauthenticated',
+        '--port', '80'
+      ]
+
+options:
+  logging: CLOUD_LOGGING_ONLY
