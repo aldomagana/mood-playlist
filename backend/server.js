@@ -21,7 +21,8 @@ const CLIENT_ID = getEnv('CLIENT_ID', 'SPOTIFY_CLIENT_ID');
 const CLIENT_SECRET = getEnv('CLIENT_SECRET', 'SPOTIFY_CLIENT_SECRET');
 const REDIRECT_URI = getEnv('REDIRECT_URI', 'REDIRECT_URI');
 const FRONTEND_URI = getEnv('FRONTEND_URI', 'FRONTEND_URI') || 'http://localhost:5173';
-const PORT = getEnv('PORT', 'PORT') || 5001;
+const PORT = process.env.PORT || 5001;
+
 
 // (duplicate removed) SKIP_RECOMMENDATIONS already declared above
 
