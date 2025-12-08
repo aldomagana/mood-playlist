@@ -1,0 +1,36 @@
+name: Deploy Frontend to Cloud Run
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Configure gcloud
+        run: |
+          gcloud config set project ${{ secrets.GCP_PROJECT }}
+          gcloud config set run/region ${{ secrets.CLOUD_RUN_REGION }}
+
+      - name: Build frontend image
+        run: |
+          # build using the Dockerfile under ./frontend
+          docker build -t gcr.io/${{ secrets.GCP_PROJECT }}/mood-playlist-frontend:latest ./frontend
+          docker push gcr.io/${{ secrets.GCP_PROJECT }}/mood-playlist-frontend:latest
+
+      - name: Deploy frontend to Cloud Run
+        uses: google-github-actions/deploy-cloudrun@v1
+        with:
+          service: mood-playlist-frontend
+          image: gcr.io/${{ secrets.GCP_PROJECT }}/mood-playlist-frontend:latest
+          region: ${{ secrets.CLOUD_RUN_REGION }}
+          allow-unauthenticated: true
