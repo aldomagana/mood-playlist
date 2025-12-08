@@ -186,8 +186,9 @@ app.post('/generate', async (req, res) => {
     const randInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 
     // Build recommendation params with randomized audio feature targets
+    // cap recommendation size to avoid large memory spikes inside containers
     const recParams = {
-      limit: randInt(12, 25), // vary playlist size
+      limit: randInt(12, 20), // vary playlist size but cap to 20
       market: 'US'
     };
 
@@ -519,6 +520,7 @@ app.post('/generate', async (req, res) => {
       try {
         const queries = [chosenGenre, genre, mood, `${chosenGenre} remix`, `${mood} playlist`].filter(Boolean);
         const candidateMap = new Map();
+        const MAX_CANDIDATES = 150; // cap overall collected candidates to limit memory
         for (const q of queries) {
           try {
             const searchRes = await axios.get('https://api.spotify.com/v1/search', {
@@ -528,10 +530,13 @@ app.post('/generate', async (req, res) => {
             const items = (searchRes.data.tracks && searchRes.data.tracks.items) || [];
             for (const it of items) {
               if (it && it.uri) candidateMap.set(it.uri, it);
+              if (candidateMap.size >= MAX_CANDIDATES) break;
             }
+            if (candidateMap.size >= MAX_CANDIDATES) break;
           } catch (qe) {
             console.warn('Search query failed for', q, qe.response?.status || qe.message);
           }
+          if (candidateMap.size >= MAX_CANDIDATES) break;
         }
         let originalSearchTracks = Array.from(candidateMap.values());
         console.log('Search fallback collected', originalSearchTracks.length, 'unique tracks');
@@ -540,7 +545,9 @@ app.post('/generate', async (req, res) => {
           console.log('Search fallback: few tracks collected, searching playlists for more candidates...');
           try {
             const playlistQueries = [chosenGenre, `${mood} playlist`, `${chosenGenre} playlist`, `${mood} mix`].filter(Boolean);
-            for (const pq of playlistQueries) {
+            // limit the number of playlist queries to reduce scraping depth
+            const limitedPlaylistQueries = playlistQueries.slice(0, 5);
+            for (const pq of limitedPlaylistQueries) {
               try {
                 const plistRes = await axios.get('https://api.spotify.com/v1/search', {
                   headers: { Authorization: `Bearer ${access_token}` },
@@ -550,21 +557,27 @@ app.post('/generate', async (req, res) => {
                 for (const p of playItems) {
                   // fetch playlist tracks (first 50)
                   try {
+                    // limit per-playlist track fetch to reduce memory
                     const tracksRes = await axios.get(`https://api.spotify.com/v1/playlists/${p.id}/tracks`, {
                       headers: { Authorization: `Bearer ${access_token}` },
-                      params: { limit: 50 }
+                      params: { limit: 20 }
                     });
                     const pts = (tracksRes.data.items || []).map(it => it.track).filter(Boolean);
                     for (const pt of pts) {
                       if (pt && pt.uri) candidateMap.set(pt.uri, pt);
+                      if (candidateMap.size >= MAX_CANDIDATES) break;
                     }
+                    if (candidateMap.size >= MAX_CANDIDATES) break;
                   } catch (ptErr) {
                     console.warn('Could not fetch playlist tracks for', p.id, ptErr.response?.status || ptErr.message);
                   }
+                  if (candidateMap.size >= MAX_CANDIDATES) break;
                 }
+                if (candidateMap.size >= MAX_CANDIDATES) break;
               } catch (pqErr) {
                 console.warn('Playlist search failed for', pq, pqErr.response?.status || pqErr.message);
               }
+              if (candidateMap.size >= MAX_CANDIDATES) break;
             }
             originalSearchTracks = Array.from(candidateMap.values());
             console.log('After playlist scraping, collected', originalSearchTracks.length, 'unique tracks');
