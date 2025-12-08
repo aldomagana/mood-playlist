@@ -1,0 +1,7 @@
+node_modules
+dist
+.env
+*.log
+.git
+frontend/mood-playlist-client/node_modules
+frontend/mood-playlist-client/dist
